@@ -33,7 +33,11 @@ function doPost(e) {
   if (text.slice(0,2) === "報告") {
     postSpeeches()
   }
-
+  
+  // 褒めると照れる
+  if (text.slice(0,5) === "すばらしい") {
+    postSlack("恐れ入ります・・・:flushed:");
+  }
 }
 
 // 検索キーワードをスプレッドシートに入力
