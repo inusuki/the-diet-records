@@ -88,7 +88,12 @@ function postSpeeches() {
   }
   
   var numberOfRecords = getNumberofRecords(recordsJSON);
-  postSlack(`この2週間で【${keywordsText}】を含む${numberOfRecords}件の質問・答弁がありました。最新の10件のみご報告させていただきます:page_facing_up:`)
+  
+  if (numberOfRecords < 11) {
+      postSlack(`この2週間で【${keywordsText}】を含む${numberOfRecords}件の質問・答弁がありました。全件ご報告させていただきます:page_facing_up:`)
+  } else {
+      postSlack(`この2週間で【${keywordsText}】を含む${numberOfRecords}件の質問・答弁がありました。最新の10件のみご報告させていただきます:page_facing_up:`)
+  }
 
   var messages = generateMessages(recordsJSON);
   for (var message of messages) {  
@@ -114,6 +119,7 @@ function getPeriod() {
   var date = new Date();
   date.setDate(date.getDate() - 14);
   var from = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`
+  Logger.log(from);
   return from;
 }
 
@@ -123,7 +129,6 @@ function getRecords(keywords, from) {
   for (var i = 1; i < keywords.length; i++) {
     keywordsEncode += "%20" + `${encodeURI(keywords[i])}`
   }
-  Logger.log(keywordsEncode);
   var url = `https://kokkai.ndl.go.jp/api/speech?any=${keywordsEncode}&from=${from}&recordPacking=JSON&startRecord=1&maximumRecords=10`;
   var records = UrlFetchApp.fetch(url).getContentText();
   var recordsJSON = JSON.parse(records)
